@@ -22,7 +22,7 @@ for title in titles:
         outputs = model(**encoded_input)
     title_embedding = outputs.last_hidden_state[:, 0, :]
     title_to_vector[title] = title_embedding
-print(title_to_vector)
+
 # Save the dictionary
 torch.save(title_to_vector, "title_to_vector.pt")
 
