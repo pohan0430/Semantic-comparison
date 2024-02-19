@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semantic Tag Creation</title>
+</head>
+<body>
+    <div>
+        <label for="inputString">Enter a string:</label>
+        <input type="text" id="inputString" placeholder="Type a string">
+        <button onclick="processString()">Process</button>
+        <p id="result"></p>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
