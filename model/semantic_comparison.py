@@ -13,7 +13,7 @@ with torch.no_grad():
 sentence_embedding = outputs.last_hidden_state[:, 0, :].numpy()
 
 # Load the title to vector mappings
-title_to_vector = torch.load("title_to_vector.pt")
+title_to_vector = torch.load("title_to_vector_1500.pt")
 titles = list(title_to_vector.keys())
 embeddings = torch.stack(list(title_to_vector.values())).squeeze(1).numpy()
 

@@ -6,7 +6,7 @@ from transformers import BertTokenizer, BertModel
 tokenizer = BertTokenizer.from_pretrained("bert-base-chinese")
 model = BertModel.from_pretrained("bert-base-chinese")
 
-filename = "semantic_tags.tsv"
+filename = "semantic_tag_1500.tsv"
 titles = []
 
 with open(filename, "r", encoding="utf-8") as file:
@@ -24,7 +24,7 @@ for title in titles:
     title_to_vector[title] = title_embedding
 print(title_to_vector)
 # Save the dictionary
-torch.save(title_to_vector, "title_to_vector.pt")
+torch.save(title_to_vector, "title_to_vector_1500.pt")
 
 print(
     f"Saved the title to vector mappings for {len(titles)} titles in 'title_to_vector.pt'."
