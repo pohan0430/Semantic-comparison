@@ -14,18 +14,33 @@ with open(filename, "r", encoding="utf-8") as file:
     for row in reader:
         titles.append(row["title"])
 
-# Generate vector for each title
+batch_size = 10
 title_to_vector = {}
-for title in titles:
-    encoded_input = tokenizer(title, return_tensors="pt")
+
+for i in range(0, len(titles), batch_size):
+    batch_titles = titles[i : i + batch_size]
+    encoded_input = tokenizer(
+        batch_titles, return_tensors="pt", padding=True, truncation=True, max_length=128
+    )
+    attention_mask = encoded_input["attention_mask"]
+
     with torch.no_grad():
         outputs = model(**encoded_input)
-    title_embedding = outputs.last_hidden_state[:, 0, :]
-    title_to_vector[title] = title_embedding
+
+    # Mean Pooling
+    input_mask_expanded = (
+        attention_mask.unsqueeze(-1).expand(outputs.last_hidden_state.size()).float()
+    )
+    sum_embeddings = torch.sum(outputs.last_hidden_state * input_mask_expanded, 1)
+    sum_mask = torch.clamp(input_mask_expanded.sum(1), min=1e-9)
+    mean_embeddings = sum_embeddings / sum_mask
+
+    for title, embedding in zip(batch_titles, mean_embeddings):
+        title_to_vector[title] = embedding
 
 # Save the dictionary
 torch.save(title_to_vector, "title_to_vector_1500.pt")
 
 print(
-    f"Saved the title to vector mappings for {len(titles)} titles in 'title_to_vector.pt'."
+    f"Saved the title to vector mappings for {len(titles)} titles in 'title_to_vector_1500.pt'."
 )
