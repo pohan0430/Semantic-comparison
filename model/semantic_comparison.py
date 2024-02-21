@@ -3,14 +3,17 @@ import torch
 from transformers import BertTokenizer, BertModel
 from sklearn.metrics.pairwise import cosine_similarity
 import logging
+from datetime import datetime
 
 log_dir = "log"
 if not os.path.exists(log_dir):
     os.makedirs(log_dir)
 
 # Set logger
+current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+log_filename = f"similarity_{current_time}.log"
 logging.basicConfig(
-    filename=os.path.join(log_dir, "similarity.log"),
+    filename=os.path.join(log_dir, log_filename),
     filemode="w",
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
