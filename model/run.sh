@@ -1,0 +1,2 @@
+clear
+python semantic_comparison.py
