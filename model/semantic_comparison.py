@@ -73,5 +73,4 @@ for rank, idx in enumerate(top_10_idx, start=1):
     logging.info(f"Rank {rank}: '{top_title}', Similarity score: {top_similarity}")
     top_10_titles.append(top_title)
 
-
 print("Logger saved.")
