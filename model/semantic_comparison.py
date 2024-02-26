@@ -59,7 +59,11 @@ def find_similar_titles_urls(input_text):
     ]
     embeddings = torch.stack(tensor_list).numpy()
 
+    logging.info("Calculating cosine similarities.")
     similarities = cosine_similarity([sentence_embedding], embeddings)[0]
+    for title_url, similarity in zip(titles_urls, similarities):
+        logging.info(f"Similarity for '{title_url}': {similarity}")
+
     top_100_idx = similarities.argsort()[-100:][::-1]
     top_100_titles_urls = []
 
