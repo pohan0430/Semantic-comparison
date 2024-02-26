@@ -1,0 +1,4 @@
+*.tsv
+*.pt
+__pycache__
+log
