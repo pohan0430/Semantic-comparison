@@ -67,3 +67,5 @@ def find_similar_titles_urls(input_text):
             f"Rank {rank}: '{top_title_url}', Similarity score: {top_similarity}"
         )
         top_100_titles_urls.append((top_title_url, top_similarity))
+
+    return top_100_titles_urls
