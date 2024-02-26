@@ -48,7 +48,11 @@ def find_similar_titles_urls(input_text):
             model_output, encoded_input["attention_mask"]
         ).squeeze(0)
 
-    title_url_to_vector = torch.load("title_url_to_vector_2023_7_1-2024_2_20.pt")
+    base_dir = os.path.dirname(os.path.dirname(__file__))
+    file_path = os.path.join(
+        base_dir, "model", "title_url_to_vector_2023_7_1-2024_2_20.pt"
+    )
+    title_url_to_vector = torch.load(file_path)
     titles_urls = list(title_url_to_vector.keys())
     tensor_list = [
         torch.tensor(value, dtype=torch.float) for value in title_url_to_vector.values()
@@ -62,7 +66,7 @@ def find_similar_titles_urls(input_text):
     logging.info("Top 100 most similar titles and URLs:")
     for rank, idx in enumerate(top_100_idx, start=1):
         top_title_url = titles_urls[idx]
-        top_similarity = similarities[idx]
+        top_similarity = float(similarities[idx])
         logging.info(
             f"Rank {rank}: '{top_title_url}', Similarity score: {top_similarity}"
         )
