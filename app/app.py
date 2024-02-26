@@ -7,7 +7,7 @@ def index():
     return render_template('index.html')
 
 @app.route('/search', methods=['POST'])
-def process():
+def search():
     data = request.get_json()
     input_string = data.get('input_string', '')
     
