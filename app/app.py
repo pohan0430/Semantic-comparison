@@ -22,11 +22,9 @@ def search():
     input_text = data.get("input_string", "")
 
     similar_titles_urls = find_similar_titles_urls(input_text)
+    print(similar_titles_urls[0])
 
-    result = [
-        {"title": title_url[0], "similarity": title_url[1]}
-        for title_url in similar_titles_urls
-    ]
+    result = similar_titles_urls
 
     return jsonify({"result": result})
 

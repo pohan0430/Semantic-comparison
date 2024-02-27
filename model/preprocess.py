@@ -10,21 +10,30 @@ tokenizer = BertTokenizer.from_pretrained("bert-base-chinese")
 model = BertModel.from_pretrained("bert-base-chinese").to(device)
 
 filename = "semantic_tag_2023_7_1-2024_2_20.tsv"
-titles_and_urls = []
+news_data = []
 
 with open(filename, "r", encoding="utf-8") as file:
     reader = csv.DictReader(file, delimiter="\t")
     for row in tqdm(reader, desc="Reading file"):
-        titles_and_urls.append((row["title"], row["url"]))
+        news_data.append(
+            (
+                row["news_id"],
+                row["title"],
+                row["content_clean"],
+                row["cat_lv1"],
+                row["cat_lv2"],
+                row["tags"],
+                row["url"],
+                row["event_date"],
+            )
+        )
 
 batch_size = 100
-title_url_to_vector = {}
+news_info_to_vector = {}
 
-for i in tqdm(
-    range(0, len(titles_and_urls), batch_size), desc="Processing titles and URLs"
-):
-    batch = titles_and_urls[i : i + batch_size]
-    batch_titles = [title for title, url in batch]
+for i in tqdm(range(0, len(news_data), batch_size), desc="Processing news data"):
+    batch = news_data[i : i + batch_size]
+    batch_titles = [title for _, title, _, _, _, _, _, _ in batch]
     encoded_input = tokenizer(
         batch_titles, return_tensors="pt", padding=True, truncation=True, max_length=128
     ).to(device)
@@ -41,12 +50,24 @@ for i in tqdm(
     sum_mask = torch.clamp(input_mask_expanded.sum(1), min=1e-9)
     mean_embeddings = sum_embeddings / sum_mask
 
-    for (title, url), embedding in zip(batch, mean_embeddings):
-        title_url_to_vector[f"{title} | {url}"] = embedding.cpu().numpy()
+    for item, embedding in zip(batch, mean_embeddings):
+        info_key = {
+            "news_id": item[0],
+            "title": item[1],
+            "cat_lv1": item[3],
+            "cat_lv2": item[4],
+            "tags": item[5],
+            "url": item[6],
+            "event_date": item[7],
+        }
+        news_info_to_vector[f"{item[0]} | {item[1]}"] = {
+            "info": info_key,
+            "vector": embedding.cpu().numpy(),
+        }
 
 # Save the dictionary
-torch.save(title_url_to_vector, "title_url_to_vector_2023_7_1-2024_2_20.pt")
+torch.save(news_info_to_vector, "news_info_to_vector_2023_7_1-2024_2_20.pt")
 
 print(
-    f"Saved the title and URL to vector mappings for {len(titles_and_urls)} items in 'title_url_to_vector.pt'."
+    f"Saved the news information and vector mappings for {len(news_data)} items in 'news_info_to_vector.pt'."
 )

@@ -2,6 +2,7 @@ import os
 import torch
 from transformers import BertTokenizer, BertModel
 from sklearn.metrics.pairwise import cosine_similarity
+import numpy as np
 import logging
 from datetime import datetime
 
@@ -31,49 +32,51 @@ def mean_pooling(model_output, attention_mask):
     sum_mask = input_mask_expanded.sum(1)
     sum_mask = torch.clamp(sum_mask, min=1e-9)
     mean_embeddings = sum_embeddings / sum_mask
-    return mean_embeddings.numpy()
+    return mean_embeddings.detach()
 
 
-def find_similar_titles_urls(input_text):
+def find_similar_titles_urls(input_text, top_n_rank=100):
     set_logger()
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     tokenizer = BertTokenizer.from_pretrained("bert-base-chinese")
-    model = BertModel.from_pretrained("bert-base-chinese")
+    model = BertModel.from_pretrained("bert-base-chinese").to(device)
 
     encoded_input = tokenizer(
         input_text, return_tensors="pt", padding=True, truncation=True, max_length=256
-    )
+    ).to(device)
     with torch.no_grad():
         model_output = model(**encoded_input)
-        sentence_embedding = mean_pooling(
-            model_output, encoded_input["attention_mask"]
-        ).squeeze(0)
-
-    base_dir = os.path.dirname(os.path.dirname(__file__))
-    file_path = os.path.join(
-        base_dir, "model", "title_url_to_vector_2023_7_1-2024_2_20.pt"
-    )
-    title_url_to_vector = torch.load(file_path)
-    titles_urls = list(title_url_to_vector.keys())
-    tensor_list = [
-        torch.tensor(value, dtype=torch.float) for value in title_url_to_vector.values()
-    ]
-    embeddings = torch.stack(tensor_list).numpy()
-
-    logging.info("Calculating cosine similarities.")
-    similarities = cosine_similarity([sentence_embedding], embeddings)[0]
-    for title_url, similarity in zip(titles_urls, similarities):
-        logging.info(f"Similarity for '{title_url}': {similarity}")
-
-    top_100_idx = similarities.argsort()[-100:][::-1]
-    top_100_titles_urls = []
-
-    logging.info("Top 100 most similar titles and URLs:")
-    for rank, idx in enumerate(top_100_idx, start=1):
-        top_title_url = titles_urls[idx]
-        top_similarity = float(similarities[idx])
-        logging.info(
-            f"Rank {rank}: '{top_title_url}', Similarity score: {top_similarity}"
+        sentence_embedding = (
+            mean_pooling(model_output, encoded_input["attention_mask"])
+            .squeeze(0)
+            .cpu()
+            .numpy()
         )
-        top_100_titles_urls.append((top_title_url, top_similarity))
 
-    return top_100_titles_urls
+    abs_path = os.path.abspath(__file__)
+    current_dir = os.path.dirname(abs_path)
+    file_path = os.path.join(current_dir, "info_to_vector_2023_7_1-2024_2_20.pt")
+    info_to_vector = torch.load(file_path, map_location=torch.device("cpu"))
+
+    similarities = cosine_similarity(
+        [sentence_embedding],
+        np.array([info["vector"] for info in info_to_vector.values()]),
+    )[0]
+    for idx, (_, info) in enumerate(info_to_vector.items()):
+        logging.info(f"Title: {info['info']['title']}, Similarity: {similarities[idx]}")
+
+    top_indices = np.argsort(similarities)[-top_n_rank:][::-1]
+    top_results = []
+
+    logging.info(f"Top {top_n_rank} most similar titles and URLs:")
+    for rank, idx in enumerate(top_indices, start=1):
+        item = list(info_to_vector.items())[idx]
+        top_info = item[1]["info"]
+        top_similarity = float(similarities[idx])
+        top_info["similarity_score"] = top_similarity
+        logging.info(
+            f"Rank: {rank}- Title: {top_info['title']}, Similarity score: {top_similarity}"
+        )
+        top_results.append(top_info)
+
+    return top_results
