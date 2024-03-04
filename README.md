@@ -1,1 +1,1 @@
-# Semantic-tag
+# Semantic comparison app
