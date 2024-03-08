@@ -17,8 +17,10 @@ def search_relevant_news():
     else:
         # get embedding
         vector = json.dumps([random.uniform(-1, 1) for _ in range(128)])
-        result = db.session.query(
-            text(f"select news_id FROM news_embedding ORDER BY embedding <-> '{vector}' LIMIT 20")
+        result = db.session.execute(
+            text(f"SELECT news_id FROM news_embedding ORDER BY embedding <-> '{vector}' LIMIT 20")
         )
 
-    return jsonify([row for row in result])
+    relevant_news_id = [row[0] for row in result]
+
+    return jsonify({'news_id': relevant_news_id})
