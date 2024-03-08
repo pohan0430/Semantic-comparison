@@ -1,3 +1,3 @@
-docker_host_ip = '172.20.0.2'
+docker_host_ip = '127.0.0.1'
 
-POSTGRES_URI = f"postgresql+psycopg2://testuser:testpwd@{docker_host_ip}:5432/vectordb"
+POSTGRES_URI = f"postgresql+psycopg2://testuser:testpwd@{docker_host_ip}:9876/vectordb"

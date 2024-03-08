@@ -2,14 +2,14 @@
 services:
   db:
     hostname: db
+    container_name: semantic-tag-db
     image: ankane/pgvector
     ports:
-     - 9876:9876
+     - 9876:5432
     restart: always
     environment:
       - POSTGRES_DB=vectordb
       - POSTGRES_USER=testuser
       - POSTGRES_PASSWORD=testpwd
-      - POSTGRES_HOST_AUTH_METHOD=trust
     volumes:
      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
