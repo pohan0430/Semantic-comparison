@@ -1,5 +1,7 @@
-*.tsv
-*.pt
-__pycache__
-log
-.venv
+*
+!/my-react-app
+# *.tsv
+# *.pt
+# __pycache__
+# log
+# .venv

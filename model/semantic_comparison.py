@@ -80,3 +80,6 @@ def find_similar_titles_urls(input_text, top_n_rank=100):
         top_results.append(top_info)
 
     return top_results
+
+
+find_similar_titles_urls("找便宜美食", top_n_rank=100)

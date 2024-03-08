@@ -1,4 +1,5 @@
 function processString() {
+    console.log("Function called.");
     var inputString = document.getElementById('inputString').value;
 
     if (inputString.length == 0) {
@@ -14,7 +15,7 @@ function processString() {
     })
     .then(response => response.json())
     .then(data => {
-        document.getElementById('result').textContent = 'Result: ' + data.result;
+        document.getElementById('result').textContent = JSON.stringify(data);
     })
     .catch(error => console.error('Error:', error));
 }
