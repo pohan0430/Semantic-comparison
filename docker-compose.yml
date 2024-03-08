@@ -2,7 +2,7 @@
 services:
   db:
     hostname: db
-    container_name: semantic-tag-db
+    container_name: semantic_tag_db
     image: ankane/pgvector
     ports:
      - 9876:5432
@@ -12,4 +12,21 @@ services:
       - POSTGRES_USER=testuser
       - POSTGRES_PASSWORD=testpwd
     volumes:
-     - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - semantic_tag_db:/var/lib/postgresql/data
+
+  app:
+    container_name: semantic_tag_app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/home/app
+    ports:
+      - 8008:5000    
+    depends_on:
+      - db
+
+volumes:
+  semantic_tag_db:
+
