@@ -1,7 +1,7 @@
 *
-!/semanticApp
-# *.tsv
-# *.pt
-# __pycache__
-# log
-# .venv
+!/semanticApp/
+*.tsv
+*.pt
+__pycache__
+log
+.venv
