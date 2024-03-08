@@ -1,8 +1,13 @@
-# in local connect to postgresql
-# db_host_ip = '127.0.0.1'
-# POSTGRES_URI = f"postgresql+psycopg2://testuser:testpwd@{db_host_ip}:9876/vectordb"
+from configparser import ConfigParser
 
-# in docker container connect to postgresql
-db_host_ip = 'db'
-POSTGRES_URI = f"postgresql+psycopg2://testuser:testpwd@{db_host_ip}:5432/vectordb"
+DB_INIT_FILE = 'database.ini'
+section = 'postgresql'
+parser = ConfigParser()
+parser.read(DB_INIT_FILE)
+if parser.has_section(section):
+    params = parser.items(section)
+    db = {param[0]: param[1] for param in params}
+else:
+    raise Exception(f'Section {section} not found in the {DB_INIT_FILE} file')
 
+POSTGRES_URI = f"postgresql+psycopg2://{db['user']}:{db['password']}@{db['host']}:{db['port']}/{db['database']}"
