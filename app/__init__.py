@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
-from .configs import *
+from config import POSTGRES_URI
 
 db = SQLAlchemy()
 
