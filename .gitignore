@@ -1,5 +1,3 @@
-*
-!/semanticApp/
 *.tsv
 *.pt
 __pycache__
