@@ -3,13 +3,22 @@ import torch
 import jieba
 import re
 from sentence_transformers import SentenceTransformer, util
-from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 import logging
 from datetime import datetime
 
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+model = SentenceTransformer("distiluse-base-multilingual-cased-v2").to(device)
+# model = SentenceTransformer("paraphrase-multilingual-mpnet-base-v2").to(device)
+
+
 def set_logger():
+    """
+    Initialize logging configuration.
+    Input: None
+    Output: None
+    """
     log_dir = "log"
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
@@ -24,30 +33,40 @@ def set_logger():
     )
 
 
-def preprocess_text(text):
+def preprocess_text(text: str) -> str:
+    """
+    Remove non-word characters and use jieba for word segmentation.
+    Input: str
+    Output: str
+    """
     text = re.sub(r"[^\w\s]", "", text)
     text = " ".join(jieba.cut(text))
     return text
 
 
-def get_embedding(input_text):
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = SentenceTransformer("distiluse-base-multilingual-cased-v2").to(device)
-    # model = SentenceTransformer("paraphrase-multilingual-mpnet-base-v2").to(device)
-    # model = SentenceTransformer("all-mpnet-base-v2").to(device)
+def get_embedding(input_text: str) -> np.ndarray:
+    """
+    Generate embedding vector for the input text.
+    Input: str
+    Output: np.ndarray
+    """
     input_text = preprocess_text(input_text)
     sentence_embedding = model.encode(input_text, convert_to_tensor=False)
     return sentence_embedding
 
 
-def find_similar_titles_urls(input_text, top_n_rank=100):
+def find_similar_titles_urls(input_text: str, top_n_rank: int = 100) -> list:
+    """
+    Find the titles most similar to the input text and return the news_id ranking list.
+    Input: input_text (str), top_n_rank (int)
+    Output: list
+    """
     set_logger()
     sentence_embedding = get_embedding(input_text)
     abs_path = os.path.abspath(__file__)
     current_dir = os.path.dirname(abs_path)
     file_path = os.path.join(current_dir, "DistilBERT.pt")
-    # file_path = os.path.join(current_dir, "mpnet.pt")
-    info_to_vector = torch.load(file_path, map_location=torch.device("cpu"))
+    info_to_vector = torch.load(file_path, map_location=device)
 
     all_news_embeddings = torch.stack(
         [
@@ -58,16 +77,9 @@ def find_similar_titles_urls(input_text, top_n_rank=100):
 
     similarities = util.cos_sim(sentence_embedding, all_news_embeddings).squeeze(0)
 
-    for idx, (news_id, info) in enumerate(info_to_vector.items()):
-        similarity_score = similarities[idx].item()
-        logging.info(
-            f"News ID: {news_id}, Title: {info['title']}, Similarity: {similarity_score}"
-        )
-
     top_indices = similarities.argsort(descending=True)[:top_n_rank]
     top_news_ids = [list(info_to_vector.keys())[idx] for idx in top_indices]
 
-    logging.info(f"Top {top_n_rank} most similar titles:")
     for rank, idx in enumerate(top_indices, start=1):
         news_id = list(info_to_vector.keys())[idx]
         info = info_to_vector[news_id]
