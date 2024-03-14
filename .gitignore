@@ -1,5 +1,12 @@
 *.tsv
 *.pt
 __pycache__
+
+# log
 log
+
+# Envirionments
 .venv
+
+# Mac
+.DS_store
