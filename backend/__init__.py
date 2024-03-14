@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+import uuid
 
 from .config import POSTGRES_URI
 
@@ -8,6 +9,7 @@ db = SQLAlchemy()
 def create_app():
     app = Flask(__name__)
 
+    app.config['SECRET_KEY'] = str(uuid.uuid4())
     app.config['SQLALCHEMY_DATABASE_URI'] = POSTGRES_URI
     db.init_app(app)
 
