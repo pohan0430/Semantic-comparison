@@ -11,3 +11,5 @@ else:
     raise Exception(f'Section {section} not found in the {DB_INIT_FILE} file')
 
 POSTGRES_URI = f"postgresql+psycopg2://{db['user']}:{db['password']}@{db['host']}:{db['port']}/{db['database']}"
+
+EMBEDDING_LENGTH = 512
