@@ -1,6 +1,6 @@
 from flask import Blueprint
 from flask_restful import Api
-from app.api.resources import SemanticTag, SemanticTagList
+from backend.api.resources import SemanticTag, SemanticTagList
 
 api_bp = Blueprint('api', __name__)
 api = Api(api_bp)

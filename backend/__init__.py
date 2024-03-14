@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
-from config import POSTGRES_URI
+from .config import POSTGRES_URI
 
 db = SQLAlchemy()
 
@@ -17,7 +17,7 @@ def create_app():
         db.create_all()
 
     # register blueprints
-    from app.api.routes import api_bp
+    from .api.routes import api_bp
     from .views import views_bp
     app.register_blueprint(api_bp)
     app.register_blueprint(views_bp)
