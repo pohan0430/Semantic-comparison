@@ -1,54 +1,50 @@
 import React, { useState } from 'react';
+import { Box, TextField, Button} from '@mui/material';
 
-function Login(props) {
+function Login({ onLoginSuccess }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (username === "admin" && password === "password") {
-      alert("Login success！");
-      props.onLoginSuccess();
-    } else {
-      setErrorMessage("Wrong password！");
-    }
-  };
-
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    onLoginSuccess(username, password);
   };
 
   return (
-    <div className="login-container">
-      <img src={`${process.env.PUBLIC_URL}/loginImage.png`} alt="Login" style={{ width: '300px', height: '200' }} />
-      <form onSubmit={handleSubmit} className="login-form">
-        <div className="form-group">
-          <label htmlFor="username">User name：</label>
-          <input
-            id="username"
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="password">Password：</label>
-          <input
-            id="password"
-            type={showPassword ? "text" : "password"}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <button type="button" onClick={togglePasswordVisibility}>
-            {showPassword ? "Hide" : "Show"} Password
-          </button>
-        </div>
-        {errorMessage && <div style={{ color: 'red' }}>{errorMessage}</div>}
-        <button type="submit">Login</button>
-      </form>
-    </div>
+    <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1, width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <TextField
+        margin="normal"
+        required
+        fullWidth
+        id="name"
+        label="User name"
+        name="name"
+        autoComplete="name"
+        autoFocus
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+      />
+      <TextField
+        margin="normal"
+        required
+        fullWidth
+        name="password"
+        label="Password"
+        type="password"
+        id="password"
+        autoComplete="current-password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+      />
+      <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', mt: 3, mb: 2 }}>
+          <Button
+            type="submit"
+            variant="contained"
+          >
+            Sign In
+          </Button>
+      </Box>
+  </Box>
   );
 }
 
