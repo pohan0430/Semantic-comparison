@@ -1,7 +1,8 @@
-# Compose a postgres database together with the extension pgvector
+version: '3.8'
+
 services:
-  db:
-    hostname: db
+  postgres-database:
+    hostname: postgres-database
     container_name: semantic_tag_db
     image: ankane/pgvector
     ports:
@@ -9,11 +10,17 @@ services:
     restart: always
     environment:
       - POSTGRES_DB=vectordb
-      - POSTGRES_USER=testuser
-      - POSTGRES_PASSWORD=testpwd
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./data:/csv
       - semantic_tag_db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 25s
+      timeout: 10s
+      retries: 5
 
   app:
     container_name: semantic_tag_app
@@ -25,8 +32,8 @@ services:
     ports:
       - 8008:5000    
     depends_on:
-      - db
+      postgres-database:
+        condition: service_healthy
 
 volumes:
   semantic_tag_db:
-

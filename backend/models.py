@@ -5,9 +5,15 @@ from sqlalchemy.orm import validates, backref
 from .config import EMBEDDING_LENGTH
 
 class NewsEmbedding(db.Model):
-    news_id = db.Column(db.Text, primary_key=True)
-    embedding = db.Column(Vector(EMBEDDING_LENGTH))
+    news_id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.Text)
+    content = db.Column(db.Text)
+    cat_lv1 = db.Column(db.Text)
+    cat_lv2 = db.Column(db.Text)
+    keywords = db.Column(db.Text)
+    url = db.Column(db.Text)
     date = db.Column(db.DateTime(timezone=True), default=func.now())
+    embedding = db.Column(Vector(EMBEDDING_LENGTH))
     children_new_id = db.relationship(
         "NewsTag",
         cascade="all, delete",
@@ -28,7 +34,7 @@ class Tag(db.Model):
 
 class NewsTag(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    news_id = db.Column(db.Text, db.ForeignKey('news_embedding.news_id', ondelete='CASCADE'))
+    news_id = db.Column(db.Integer, db.ForeignKey('news_embedding.news_id', ondelete='CASCADE'))
     tag = db.Column(db.Text, db.ForeignKey('tag.tag', ondelete='CASCADE'))
 
 @validates('username')

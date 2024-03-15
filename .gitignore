@@ -10,3 +10,6 @@ log
 
 # Mac
 .DS_store
+
+# data
+/data

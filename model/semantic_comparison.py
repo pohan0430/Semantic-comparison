@@ -91,4 +91,5 @@ def find_similar_titles_urls(input_text: str, top_n_rank: int = 100) -> list:
     return top_news_ids
 
 
-top_news_ids = find_similar_titles_urls("提供購買房子建議", top_n_rank=50)
+if __name__ == '__main__':
+    top_news_ids = find_similar_titles_urls("提供購買房子建議", top_n_rank=50)
