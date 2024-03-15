@@ -12,6 +12,6 @@
   ```
 - Activate semantic App
   ```bash
-  cd semanticApp
+  cd frontend
   npm start
   ```
