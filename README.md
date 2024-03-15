@@ -10,3 +10,8 @@
   ```bash
   docker-compose up -d
   ```
+- Activate semantic App
+  ```bash
+  cd semanticApp
+  npm start
+  ```
