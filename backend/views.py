@@ -23,7 +23,7 @@ def search_relevant_news():
     vector = json.dumps(get_embedding(tagname).tolist())
     result = db.session.execute(
         text(f"""SELECT title, cat_lv1, cat_lv2, keywords, url, date
-             FROM news_embedding ORDER BY embedding <-> '{vector}' LIMIT {top_n_rank}""")
+            FROM news_embedding ORDER BY embedding <=> '{vector}' LIMIT {top_n_rank}""")
     )
 
     news = [{
