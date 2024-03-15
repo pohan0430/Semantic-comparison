@@ -42,7 +42,7 @@ class SemanticTag(Resource):
 
             vector = json.dumps(get_embedding(tagname).tolist())
             result = db.session.execute(
-                text(f"SELECT news_id FROM news_embedding ORDER BY embedding <-> '{vector}' LIMIT {top_n_rank}")
+                text(f"SELECT news_id FROM news_embedding ORDER BY embedding <=> '{vector}' LIMIT {top_n_rank}")
             )
 
             relevant_news_id = [row[0] for row in result]
