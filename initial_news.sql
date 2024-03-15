@@ -5,12 +5,12 @@ SELECT
         regexp_replace(content, '<[^>]+>', ''), 
         '</[^>]+>', 
         ''
-    ) AS content_clean,
+    ) AS content,
     cat_lv1,
     cat_lv2,
-    tags,
+    tags AS keywords,
     url,
-    event_date
+    event_date AS date
 FROM etl_ettoday_news
-WHERE event_date BETWEEN '2023-07-01' AND '2024-02-20'
-AND publish_datetime BETWEEN '2023-07-01' AND '2024-02-20';
+WHERE event_date BETWEEN '$tx_date(, -210D)' AND '$tx_date()'
+AND publish_datetime BETWEEN '$tx_date(, -210D)' AND '$tx_date()';
