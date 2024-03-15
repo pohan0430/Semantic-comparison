@@ -1,11 +1,17 @@
 # Semantic comparison app
 
 ## Getting Started
-* First download and process the initial data.
+
+- First download and process the initial data.
   ```bash
   python preprocess.py --export_date 'YYYY-MM-DD'
   ```
-* Build the app
+- Build the app
   ```bash
   docker-compose up -d
+  ```
+- Activate semantic App
+  ```bash
+  cd semanticApp
+  npm start
   ```
