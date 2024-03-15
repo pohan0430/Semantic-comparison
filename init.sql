@@ -6,3 +6,17 @@ CREATE TABLE IF NOT EXISTS Users (
 );
 
 INSERT INTO Users (username, password) VALUES ('admin', 'admin');
+
+CREATE TABLE News_Embedding (
+    news_id INTEGER PRIMARY KEY,
+    title TEXT,
+    content TEXT,
+    cat_lv1 TEXT,
+    cat_lv2 TEXT,
+    keywords TEXT,
+    url TEXT,
+    date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    embedding VECTOR(512)  -- Assuming EMBEDDING_LENGTH is predefined as an integer
+);
+
+COPY news_embedding FROM '/csv/news_embedding.csv' DELIMITER ',' CSV HEADER;
