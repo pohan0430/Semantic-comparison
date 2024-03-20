@@ -1,5 +1,6 @@
 *.tsv
 *.pt
+*.xlsx
 __pycache__
 
 # log
