@@ -8,16 +8,15 @@ import re
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Load the stsb model
-model = SentenceTransformer("distiluse-base-multilingual-cased-v2").to(device)
-# model = SentenceTransformer("paraphrase-multilingual-mpnet-base-v2").to(device)
-# model = SentenceTransformer("all-mpnet-base-v2").to(device)
+# model = SentenceTransformer("distiluse-base-multilingual-cased-v2").to(device)
+model = SentenceTransformer("paraphrase-multilingual-mpnet-base-v2").to(device)
 
-filename = "semantic_tag_2023_7_1-2024_2_20.tsv"
+filename = "semantic_tag.tsv"
 news_data = []
 
 
 # Text preprocess
-def preprocess_text(text):
+def preprocess_text(text: str) -> str:
     text = re.sub(r"[^\w\s]", "", text)
     text = " ".join(jieba.cut(text))
     return text
@@ -28,7 +27,7 @@ with open(filename, "r", encoding="utf-8") as file:
     for row in tqdm(reader, desc="Reading file"):
         title_original = row["title"]
         title_clean = preprocess_text(row["title"])
-        content_clean = preprocess_text(row["content_clean"])
+        content_clean = preprocess_text(row["content"])
         news_data.append(
             (
                 row["news_id"],
@@ -37,9 +36,9 @@ with open(filename, "r", encoding="utf-8") as file:
                 content_clean,
                 row["cat_lv1"],
                 row["cat_lv2"],
-                row["tags"],
+                row["keywords"],
                 row["url"],
-                row["event_date"],
+                row["date"],
             )
         )
 
