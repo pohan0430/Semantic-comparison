@@ -4,13 +4,16 @@ import jieba
 import re
 from sentence_transformers import SentenceTransformer, util
 import numpy as np
+import pandas as pd
 import logging
 from datetime import datetime
 
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model = SentenceTransformer("distiluse-base-multilingual-cased-v2").to(device)
-# model = SentenceTransformer("paraphrase-multilingual-mpnet-base-v2").to(device)
+# model = SentenceTransformer("distiluse-base-multilingual-cased-v2").to(device)
+# ptfile = "DistilBERT.pt"
+model = SentenceTransformer("paraphrase-multilingual-mpnet-base-v2").to(device)
+ptfile = "mpnet.pt"
 
 
 def set_logger():
@@ -44,6 +47,19 @@ def preprocess_text(text: str) -> str:
     return text
 
 
+def write_info_to_excel(titles_info: list, excel_path: str = "similar_titles.xlsx"):
+    """
+    Write the similar titles information to an Excel file.
+    Parameters:
+    - titles_info :list
+    - excel_path :str
+    """
+    df = pd.DataFrame(
+        titles_info, columns=["Rank", "News ID", "Title", "Similarity Score"]
+    )
+    df.to_excel(excel_path, index=False)
+
+
 def get_embedding(input_text: str) -> np.ndarray:
     """
     Generate embedding vector for the input text.
@@ -65,7 +81,7 @@ def find_similar_titles_urls(input_text: str, top_n_rank: int = 100) -> list:
     sentence_embedding = get_embedding(input_text)
     abs_path = os.path.abspath(__file__)
     current_dir = os.path.dirname(abs_path)
-    file_path = os.path.join(current_dir, "DistilBERT.pt")
+    file_path = os.path.join(current_dir, ptfile)
     info_to_vector = torch.load(file_path, map_location=device)
 
     all_news_embeddings = torch.stack(
@@ -79,17 +95,20 @@ def find_similar_titles_urls(input_text: str, top_n_rank: int = 100) -> list:
 
     top_indices = similarities.argsort(descending=True)[:top_n_rank]
     top_news_ids = [list(info_to_vector.keys())[idx] for idx in top_indices]
+    titles_info = []
 
     for rank, idx in enumerate(top_indices, start=1):
         news_id = list(info_to_vector.keys())[idx]
         info = info_to_vector[news_id]
         top_similarity = similarities[idx].item()
+        titles_info.append([rank, news_id, info["title"], top_similarity])
         logging.info(
             f"Rank: {rank} - News ID: {news_id}, Title: {info['title']}, Similarity score: {top_similarity}"
         )
+    write_info_to_excel(titles_info)
 
     return top_news_ids
 
 
-if __name__ == '__main__':
-    top_news_ids = find_similar_titles_urls("提供購買房子建議", top_n_rank=50)
+if __name__ == "__main__":
+    top_news_ids = find_similar_titles_urls("夏天清涼旅遊推薦", top_n_rank=50)
