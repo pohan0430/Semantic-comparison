@@ -12,12 +12,11 @@ function Script() {
         return;
     }
 
-    fetch('http://localhost:8008/search', {
+    fetch(`http://localhost:8008/search/${encodeURIComponent(inputString)}`, {
       method: 'POST',
       headers: {
           'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ tagname: inputString })
+      }
     })
     .then(response => response.json())
     .then(data => {
