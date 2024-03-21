@@ -10,12 +10,9 @@ from model.semantic_comparison import get_embedding
 
 views_bp = Blueprint('views', __name__)
 
-@views_bp.route('/search', methods=['POST'])
-def search_relevant_news():
-    data = request.json
-    tagname = data.get('tagname', '')
-    top_n_rank = data.get('top_n_rank', 20)
-
+@views_bp.route('/search/<string:tagname>', methods=['POST'])
+def search_relevant_news(tagname: str):
+    top_n_rank = request.args.get('top_n_rank', default=20, type=int)
     if len(tagname) < 1:
         flash('tagname is too short!', category='error') 
         return jsonify({'error': 'tagname is too short'}), 400
