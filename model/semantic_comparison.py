@@ -10,10 +10,10 @@ from datetime import datetime
 
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-# model = SentenceTransformer("distiluse-base-multilingual-cased-v2").to(device)
-# ptfile = "DistilBERT.pt"
-model = SentenceTransformer("paraphrase-multilingual-mpnet-base-v2").to(device)
-ptfile = "mpnet.pt"
+model = SentenceTransformer("distiluse-base-multilingual-cased-v2").to(device)
+ptfile = "DistilBERT.pt"
+# model = SentenceTransformer("paraphrase-multilingual-mpnet-base-v2").to(device)
+# ptfile = "mpnet.pt"
 
 
 def set_logger():

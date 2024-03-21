@@ -8,8 +8,8 @@ import re
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Load the stsb model
-# model = SentenceTransformer("distiluse-base-multilingual-cased-v2").to(device)
-model = SentenceTransformer("paraphrase-multilingual-mpnet-base-v2").to(device)
+model = SentenceTransformer("distiluse-base-multilingual-cased-v2").to(device)
+# model = SentenceTransformer("paraphrase-multilingual-mpnet-base-v2").to(device)
 
 filename = "semantic_tag.tsv"
 news_data = []
