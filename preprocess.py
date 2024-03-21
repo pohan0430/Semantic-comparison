@@ -8,8 +8,7 @@ import json
 import re
 import os
 import jieba
-import torch
-from sentence_transformers import SentenceTransformer
+from model.semantic_comparison import model
 from tqdm import tqdm
 
 def parse_args():
@@ -50,12 +49,7 @@ def process_text(text):
 
 def embedding(df: pd.DataFrame, batch_size: int=100) -> pd.DataFrame:
     print('embedding...')
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    # Load the stsb model
-    model = SentenceTransformer("distiluse-base-multilingual-cased-v2").to(device)
-    # model = SentenceTransformer("paraphrase-multilingual-mpnet-base-v2").to(device)
-    # model = SentenceTransformer("all-mpnet-base-v2").to(device)
     df['vector'] = np.nan
     title_clean = df['title'].apply(process_text)
     batch_size = 10
