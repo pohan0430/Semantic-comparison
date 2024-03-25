@@ -25,10 +25,10 @@ services:
   app:
     container_name: semantic_tag_app
     build:
-      context: .
+      context: ./backend
       dockerfile: Dockerfile
     volumes:
-      - .:/home/app
+      - ./backend:/home/app
     ports:
       - 8008:5000    
     depends_on:

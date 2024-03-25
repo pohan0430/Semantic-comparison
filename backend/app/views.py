@@ -19,17 +19,18 @@ def search_relevant_news(tagname: str):
 
     vector = json.dumps(get_embedding(tagname).tolist())
     result = db.session.execute(
-        text(f"""SELECT title, cat_lv1, cat_lv2, keywords, url, date
+        text(f"""SELECT news_id, title, cat_lv1, cat_lv2, keywords, url, date
             FROM news_embedding ORDER BY embedding <=> '{vector}' LIMIT {top_n_rank}""")
     )
 
     news = [{
-        "title": row[0], 
-        "cat_lv1": row[1], 
-        "cat_lv2": row[2], 
-        "keywords": row[3], 
-        "url": row[4], 
-        "date": row[5]} 
+        "news_id": row[0], 
+        "title": row[1], 
+        "cat_lv1": row[2], 
+        "cat_lv2": row[3], 
+        "keywords": row[4], 
+        "url": row[5], 
+        "date": row[6]} 
     for row in result]
 
     return jsonify({'news': news})
