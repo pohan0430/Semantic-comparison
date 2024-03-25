@@ -49,11 +49,12 @@ def download_csv(args) -> pd.DataFrame:
 
 # Text preprocess
 def process_text(text: str) -> str:
+    if pd.isna(text):
+        return ""
     text = re.sub(r"[^\w\s,]", "", text)
     segments = text.split(",")
-    text = [" ".join(jieba.cut(segment)) for segment in segments]
-    text = " ".join(text)
-    return text
+    processed_segments = [" ".join(jieba.cut(segment)) for segment in segments]
+    return " ".join(processed_segments)
 
 
 def embedding(df: pd.DataFrame, batch_size: int = 100) -> pd.DataFrame:
