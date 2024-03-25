@@ -7,8 +7,8 @@ from typing import List
 import sys
 sys.path.append('../')
 
-from backend.models import Tag, NewsEmbedding, NewsTag, Users
-from backend import db
+from app.models import Tag, NewsEmbedding, NewsTag, Users
+from app import db
 from model.semantic_comparison import get_embedding
 
 class SemanticTag(Resource):
@@ -34,18 +34,17 @@ class SemanticTag(Resource):
 
     def post(self, tagname: str):
         try:
+            # TODO: handle news_id is empty
             data = request.json
-            top_n_rank = data.get('top_n_rank', 20)
+            relevant_news_id = data.get('news_id', "")
             # add tag
             db.session.add(Tag(tag=tagname))
             db.session.commit()
 
-            vector = json.dumps(get_embedding(tagname).tolist())
-            result = db.session.execute(
-                text(f"SELECT news_id FROM news_embedding ORDER BY embedding <=> '{vector}' LIMIT {top_n_rank}")
-            )
-
-            relevant_news_id = [row[0] for row in result]
+            # vector = json.dumps(get_embedding(tagname).tolist())
+            # result = db.session.execute(
+            #     text(f"SELECT news_id FROM news_embedding ORDER BY embedding <=> '{vector}' LIMIT {top_n_rank}")
+            # )
 
             for news_id in relevant_news_id:
                 db.session.add(NewsTag(news_id=news_id, tag=tagname))
