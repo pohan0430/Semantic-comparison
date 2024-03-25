@@ -8,7 +8,7 @@ import json
 import re
 import os
 import jieba
-from model.semantic_comparison import model
+from backend.model.semantic_comparison import model
 from tqdm import tqdm
 
 
