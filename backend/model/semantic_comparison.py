@@ -8,12 +8,9 @@ import pandas as pd
 import logging
 from datetime import datetime
 
-
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model = SentenceTransformer("distiluse-base-multilingual-cased-v2").to(device)
 ptfile = "DistilBERT.pt"
-# model = SentenceTransformer("paraphrase-multilingual-mpnet-base-v2").to(device)
-# ptfile = "mpnet.pt"
 
 
 def set_logger():
@@ -42,9 +39,10 @@ def preprocess_text(text: str) -> str:
     Input: str
     Output: str
     """
-    text = re.sub(r"[^\w\s]", "", text)
-    text = " ".join(jieba.cut(text))
-    return text
+    text = re.sub(r"[^\w\s,]", "", text)
+    segments = text.split(",")
+    processed_segments = [" ".join(jieba.cut(segment)) for segment in segments]
+    return " ".join(processed_segments)
 
 
 def write_info_to_excel(titles_info: list, excel_path: str = "similar_titles.xlsx"):
@@ -60,15 +58,20 @@ def write_info_to_excel(titles_info: list, excel_path: str = "similar_titles.xls
     df.to_excel(excel_path, index=False)
 
 
-def get_embedding(input_text: str) -> np.ndarray:
+def get_embedding(text) -> np.ndarray:
     """
-    Generate embedding vector for the input text.
-    Input: str
-    Output: np.ndarray
+    Generate embedding vector for the input text or list of texts.
+    Input: str or list of str
+    Output: np.ndarray (1D if input is str, 2D if input is list of str)
     """
-    input_text = preprocess_text(input_text)
-    sentence_embedding = model.encode(input_text, convert_to_tensor=False)
-    return sentence_embedding
+    if isinstance(text, str):
+        text = preprocess_text(text)
+        return model.encode(text, convert_to_tensor=False)
+    elif isinstance(text, list):
+        texts = [preprocess_text(text) for text in text]
+        return np.array([model.encode(text, convert_to_tensor=False) for text in texts])
+    else:
+        raise ValueError("Input must be a string or a list of strings.")
 
 
 def find_similar_titles_urls(input_text: str, top_n_rank: int = 100) -> list:
@@ -111,4 +114,4 @@ def find_similar_titles_urls(input_text: str, top_n_rank: int = 100) -> list:
 
 
 if __name__ == "__main__":
-    top_news_ids = find_similar_titles_urls("夏天清涼旅遊推薦", top_n_rank=50)
+    top_news_ids = find_similar_titles_urls("提供購買房子建議", top_n_rank=50)
