@@ -58,15 +58,20 @@ def write_info_to_excel(titles_info: list, excel_path: str = "similar_titles.xls
     df.to_excel(excel_path, index=False)
 
 
-def get_embedding(input_text: str) -> np.ndarray:
+def get_embedding(text) -> np.ndarray:
     """
-    Generate embedding vector for the input text.
-    Input: str
-    Output: np.ndarray
+    Generate embedding vector for the input text or list of texts.
+    Input: str or list of str
+    Output: np.ndarray (1D if input is str, 2D if input is list of str)
     """
-    input_text = preprocess_text(input_text)
-    sentence_embedding = model.encode(input_text, convert_to_tensor=False)
-    return sentence_embedding
+    if isinstance(text, str):
+        text = preprocess_text(text)
+        return model.encode(text, convert_to_tensor=False)
+    elif isinstance(text, list):
+        texts = [preprocess_text(text) for text in text]
+        return np.array([model.encode(text, convert_to_tensor=False) for text in texts])
+    else:
+        raise ValueError("Input must be a string or a list of strings.")
 
 
 def find_similar_titles_urls(input_text: str, top_n_rank: int = 100) -> list:
