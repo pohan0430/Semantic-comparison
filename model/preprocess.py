@@ -9,7 +9,6 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Load the stsb model
 model = SentenceTransformer("distiluse-base-multilingual-cased-v2").to(device)
-# model = SentenceTransformer("paraphrase-multilingual-mpnet-base-v2").to(device)
 
 filename = "semantic_tag.tsv"
 news_data = []
@@ -17,9 +16,10 @@ news_data = []
 
 # Text preprocess
 def preprocess_text(text: str) -> str:
-    text = re.sub(r"[^\w\s]", "", text)
-    text = " ".join(jieba.cut(text))
-    return text
+    text = re.sub(r"[^\w\s,]", "", text)
+    segments = text.split(",")
+    processed_segments = [" ".join(jieba.cut(segment)) for segment in segments]
+    return " ".join(processed_segments)
 
 
 with open(filename, "r", encoding="utf-8") as file:
@@ -28,6 +28,7 @@ with open(filename, "r", encoding="utf-8") as file:
         title_original = row["title"]
         title_clean = preprocess_text(row["title"])
         content_clean = preprocess_text(row["content"])
+        keywords_clean = preprocess_text(row["keywords"])
         news_data.append(
             (
                 row["news_id"],
@@ -36,7 +37,7 @@ with open(filename, "r", encoding="utf-8") as file:
                 content_clean,
                 row["cat_lv1"],
                 row["cat_lv2"],
-                row["keywords"],
+                keywords_clean,
                 row["url"],
                 row["date"],
             )
@@ -50,23 +51,32 @@ for i in tqdm(range(0, len(news_data), batch_size), desc="Processing news data")
     batch_titles_cleaned = [
         title_clean for _, _, title_clean, _, _, _, _, _, _ in batch
     ]
-    embeddings = model.encode(batch_titles_cleaned, convert_to_tensor=True)
+    batch_keywords_cleaned = [
+        keywords_clean for _, _, _, _, _, _, keywords_clean, _, _ in batch
+    ]
+
+    title_embeddings = model.encode(
+        batch_titles_cleaned, convert_to_tensor=True, device=device
+    )
+    keywords_embeddings = model.encode(
+        batch_keywords_cleaned, convert_to_tensor=True, device=device
+    )
+    embeddings = (title_embeddings + keywords_embeddings) / 2
 
     for item, embedding in zip(batch, embeddings):
         news_id = item[0]
         info_key = {
             "news_id": news_id,
             "title": item[1],
-            "content_clean": item[2],
-            "cat_lv1": item[3],
-            "cat_lv2": item[4],
-            "tags": item[5],
-            "url": item[6],
-            "event_date": item[7],
+            "content_clean": item[3],
+            "cat_lv1": item[4],
+            "cat_lv2": item[5],
+            "tags": item[6],
+            "url": item[7],
+            "event_date": item[8],
             "vector": embedding.cpu().numpy(),
         }
         news_info_to_vector[news_id] = info_key
-
 
 # Save the dictionary
 dict_name = "DistilBERT.pt"
