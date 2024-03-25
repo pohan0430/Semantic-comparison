@@ -8,12 +8,9 @@ import pandas as pd
 import logging
 from datetime import datetime
 
-
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model = SentenceTransformer("distiluse-base-multilingual-cased-v2").to(device)
 ptfile = "DistilBERT.pt"
-# model = SentenceTransformer("paraphrase-multilingual-mpnet-base-v2").to(device)
-# ptfile = "mpnet.pt"
 
 
 def set_logger():
@@ -42,9 +39,10 @@ def preprocess_text(text: str) -> str:
     Input: str
     Output: str
     """
-    text = re.sub(r"[^\w\s]", "", text)
-    text = " ".join(jieba.cut(text))
-    return text
+    text = re.sub(r"[^\w\s,]", "", text)
+    segments = text.split(",")
+    processed_segments = [" ".join(jieba.cut(segment)) for segment in segments]
+    return " ".join(processed_segments)
 
 
 def write_info_to_excel(titles_info: list, excel_path: str = "similar_titles.xlsx"):
@@ -111,4 +109,4 @@ def find_similar_titles_urls(input_text: str, top_n_rank: int = 100) -> list:
 
 
 if __name__ == "__main__":
-    top_news_ids = find_similar_titles_urls("夏天清涼旅遊推薦", top_n_rank=50)
+    top_news_ids = find_similar_titles_urls("提供購買房子建議", top_n_rank=50)
