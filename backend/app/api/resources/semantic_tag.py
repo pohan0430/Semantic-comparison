@@ -7,8 +7,8 @@ from typing import List
 import sys
 sys.path.append('../')
 
-from backend.models import Tag, NewsEmbedding, NewsTag, Users
-from backend import db
+from app.models import Tag, NewsEmbedding, NewsTag, Users
+from app import db
 from model.semantic_comparison import get_embedding
 
 class SemanticTag(Resource):
