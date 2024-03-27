@@ -22,8 +22,8 @@ services:
       timeout: 10s
       retries: 5
 
-  app:
-    container_name: semantic_tag_app
+  api:
+    container_name: semantic_tag_api
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -34,6 +34,18 @@ services:
     depends_on:
       postgres-database:
         condition: service_healthy
+
+  web:
+    container_name: semantic_tag_web
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    volumes:
+      - ./frontend:/home/app
+    ports:
+      - 6868:3000    
+    depends_on:
+      - api
 
 volumes:
   semantic_tag_db:
