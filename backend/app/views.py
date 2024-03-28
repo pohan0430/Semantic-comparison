@@ -1,9 +1,6 @@
 from flask import Blueprint, request, flash, jsonify
 from sqlalchemy import text
 import json
-import sys
-from typing import List
-sys.path.append('../')
 
 from . import db
 from model.semantic_comparison import get_embedding
@@ -15,7 +12,7 @@ def search_relevant_news(tagname: str):
     top_n_rank = request.args.get('top_n_rank', default=20, type=int)
     if len(tagname) < 1:
         flash('tagname is too short!', category='error') 
-        return jsonify({'error': 'tagname is too short'}), 400
+        return {'error': 'tagname is too short'}, 400
 
     vector = json.dumps(get_embedding(tagname).tolist())
     result = db.session.execute(
@@ -33,4 +30,4 @@ def search_relevant_news(tagname: str):
         "date": row[6]} 
     for row in result]
 
-    return jsonify({'news': news})
+    return {'news': news}
