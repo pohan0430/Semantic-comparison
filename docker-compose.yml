@@ -23,6 +23,7 @@ services:
       retries: 5
 
   api:
+    hostname: api
     container_name: semantic_tag_api
     build:
       context: ./backend
@@ -41,7 +42,8 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     volumes:
-      - ./frontend:/home/app
+      - ./frontend/public:/home/app/public
+      - ./frontend/src:/home/app/src
     ports:
       - 6868:3000    
     depends_on:

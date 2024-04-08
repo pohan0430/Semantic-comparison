@@ -15,20 +15,20 @@ function Script() {
   const processString = (event) => {
     event.preventDefault();
     if (inputString.length === 0) {
-        return;
+      return;
     }
 
     fetch(`http://localhost:8008/search/${encodeURIComponent(inputString)}`, {
       method: 'POST',
       headers: {
-          'Content-Type': 'application/json'
+        'Content-Type': 'application/json'
       }
     })
-    .then(response => response.json())
-    .then(data => {
+      .then(response => response.json())
+      .then(data => {
         setResults(data.news);
-    })
-    .catch(error => console.error('Error:', error));
+      })
+      .catch(error => console.error('Error:', error));
     setOpen(true);
   };
 
@@ -54,17 +54,17 @@ function Script() {
     fetch(`http://localhost:8008/tag/${encodeURIComponent(inputString)}`, {
       method: 'POST',
       headers: {
-          'Content-Type': 'application/json'
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({ news_id: selectedNews })
     })
-    .then(response => response.json())
-    .then(data => {
+      .then(response => response.json())
+      .then(data => {
         console.log('Success:', data);
         setOpen(false);
         setSelectedNews([]);
-    })
-    .catch(error => console.error('Error:', error));
+      })
+      .catch(error => console.error('Error:', error));
   };
 
   const style = {
@@ -93,8 +93,8 @@ function Script() {
             fullWidth
             margin="normal"
             sx={{
-              bgcolor: '#fff', 
-              input: { color: '#000' }, 
+              bgcolor: '#fff',
+              input: { color: '#000' },
               '& .MuiOutlinedInput-root': {
                 '& fieldset': {
                   borderColor: '#000',
@@ -106,8 +106,8 @@ function Script() {
                   borderColor: 'primary.light',
                 },
               },
-              '& .MuiInputLabel-root': { 
-                color: '#000', 
+              '& .MuiInputLabel-root': {
+                color: '#000',
                 '&.Mui-focused': {
                   color: 'primary.light',
                 },
