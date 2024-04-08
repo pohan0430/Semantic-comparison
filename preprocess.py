@@ -7,6 +7,7 @@ from argparse import ArgumentParser
 import json
 import re
 import os
+import tqdm
 import jieba
 from backend.model.semantic_comparison import model
 from tqdm import tqdm
@@ -25,17 +26,28 @@ def parse_args():
 
 
 def download_csv(args) -> pd.DataFrame:
-    print("downloading...")
     table_name = args.table_name
     export_date = args.export_date
 
     url = f"https://dora.ettoday.net/export/eds/{table_name}.zip?version={export_date}_000000&format=tsv"
 
-    response = requests.get(url)
+    response = requests.get(url, stream=True)
 
     if response.status_code == 200:
-        with ZipFile(BytesIO(response.content)) as zip_file:
-            tsv_content = zip_file.read(zip_file.namelist()[0])
+        total_size_in_bytes = int(response.headers.get("content-length", 0))
+        block_size = 1024
+
+        with tqdm(
+            total=total_size_in_bytes, unit="iB", unit_scale=True, desc="Downloading..."
+        ) as progress_bar:
+            with BytesIO() as memory_file:
+                for data in response.iter_content(block_size):
+                    progress_bar.update(len(data))
+                    memory_file.write(data)
+
+                memory_file.seek(0)
+                with ZipFile(memory_file) as zip_file:
+                    tsv_content = zip_file.read(zip_file.namelist()[0])
 
         df = pd.read_csv(BytesIO(tsv_content), sep="\t", encoding="utf-8")
 
