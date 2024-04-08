@@ -14,7 +14,7 @@ function Script() {
         return;
     }
 
-    fetch(`http://api:5000/search/${encodeURIComponent(inputString)}`, {
+    fetch(`api:5000/search/${encodeURIComponent(inputString)}`, {
       method: 'POST',
       headers: {
           'Content-Type': 'application/json'
@@ -47,7 +47,7 @@ function Script() {
       return;
     }
 
-    fetch(`http://api:5000/tag/${encodeURIComponent(inputString)}`, {
+    fetch(`api:5000/tag/${encodeURIComponent(inputString)}`, {
       method: 'POST',
       headers: {
           'Content-Type': 'application/json'
