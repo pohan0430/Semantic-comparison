@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
-import { Container, Modal, Box, Typography, Link, List, ListItem, Divider, TextField, Button, Card, CardContent, IconButton, Checkbox, FormGroup, FormControlLabel } from '@mui/material';
+import {
+  Container, Modal, Box, Typography, Link, List, ListItem, Divider,
+  TextField, Button, Card, CardContent, IconButton, Checkbox,
+  FormGroup, FormControlLabel
+} from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
 function Script() {
@@ -14,7 +18,7 @@ function Script() {
         return;
     }
 
-    fetch(`api:5000/search/${encodeURIComponent(inputString)}`, {
+    fetch(`http://localhost:8008/search/${encodeURIComponent(inputString)}`, {
       method: 'POST',
       headers: {
           'Content-Type': 'application/json'
@@ -47,7 +51,7 @@ function Script() {
       return;
     }
 
-    fetch(`api:5000/tag/${encodeURIComponent(inputString)}`, {
+    fetch(`http://localhost:8008/tag/${encodeURIComponent(inputString)}`, {
       method: 'POST',
       headers: {
           'Content-Type': 'application/json'
