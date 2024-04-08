@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
-import { Container, Modal, Box, Typography, Link, List, ListItem, Divider, TextField, Button, Card, CardContent, IconButton, Checkbox, FormGroup, FormControlLabel } from '@mui/material';
+import {
+  Container, Modal, Box, Typography, Link, List, ListItem, Divider,
+  TextField, Button, Card, CardContent, IconButton, Checkbox,
+  FormGroup, FormControlLabel
+} from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
-function Script() {
+function Search() {
   const [inputString, setInputString] = useState('');
   const [results, setResults] = useState([]);
   const [selectedNews, setSelectedNews] = useState([]);
@@ -165,4 +169,4 @@ function Script() {
   );
 }
 
-export default Script;
+export default Search;
