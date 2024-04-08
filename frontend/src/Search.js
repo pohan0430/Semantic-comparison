@@ -6,7 +6,7 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
-function Script() {
+function Search() {
   const [inputString, setInputString] = useState('');
   const [results, setResults] = useState([]);
   const [selectedNews, setSelectedNews] = useState([]);
@@ -169,4 +169,4 @@ function Script() {
   );
 }
 
-export default Script;
+export default Search;
