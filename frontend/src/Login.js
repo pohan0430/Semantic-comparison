@@ -11,7 +11,7 @@ function Login({ onLoginSuccess }) {
   };
 
   return (
-    <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1, width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1, width: '30%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <TextField
         margin="normal"
         required
