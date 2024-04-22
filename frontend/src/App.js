@@ -3,6 +3,9 @@ import { Routes, Route, Link, Navigate, useNavigate  } from 'react-router-dom';
 import { AppBar, Toolbar, Button, Typography, Box, Container, Menu, MenuItem  } from '@mui/material';
 import Login from './Login';
 import Search from './Search';
+import Results from './Results';
+import Delete from './Delete';
+import { History, TagDetails } from './History';
 import Home from './Home';
 
 function App() {
@@ -26,6 +29,24 @@ function App() {
 
   const handleLoginSuccess = () => {
     setIsLoggedIn(true);
+  };
+
+  const NotFound = () => {
+    const navigate = useNavigate();
+
+    return (
+      <Container component="main" maxWidth="lg" sx={{ mt: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <Typography variant="h4" gutterBottom>
+          404 Not Found
+        </Typography>
+        <Typography variant="subtitle1">
+          Sorry, the page you are looking for does not exist.
+        </Typography>
+        <Button variant="contained" color="primary" sx={{ mt: 3 }} onClick={() => navigate('/')}>
+          Go Home
+        </Button>
+      </Container>
+    );
   };
 
   return (
@@ -64,20 +85,25 @@ function App() {
               >
                 <MenuItem onClick={() => handleNavigate('/search')} sx={{ '&:hover': { backgroundColor: "primary.light", color: "black" } }}>Search</MenuItem>
                 <MenuItem onClick={() => handleNavigate('/delete')} sx={{ '&:hover': { backgroundColor: "primary.light", color: "black" } }}>Delete</MenuItem>
+                <MenuItem onClick={() => handleNavigate('/history')} sx={{ '&:hover': { backgroundColor: "primary.light", color: "black" } }}>History</MenuItem>
               </Menu>
               <Button color="inherit" onClick={() => setIsLoggedIn(false)}>Logout</Button>
             </>
           )}
         </Toolbar>
       </AppBar>
-      <Container component="main" maxWidth="xs">
+      <Container component="main" maxWidth="lg">
         <Box sx={{ marginTop: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <Routes>
             <Route path="/login" element={!isLoggedIn ? <Login onLoginSuccess={handleLoginSuccess} /> : <Navigate replace to="/home" />} />
             <Route path="/home" element={isLoggedIn ? <Home /> : <Navigate replace to="/login" />} />
-            <Route path="/search" element={isLoggedIn ? <Search /> : <Navigate replace to="/login" />} />
-            <Route path="/delete" element={isLoggedIn ? <Search /> : <Navigate replace to="/login" />} />
+            <Route path="/search/*" element={isLoggedIn ? <Search /> : <Navigate replace to="/login" />} />
+            <Route path="/delete/*" element={isLoggedIn ? <Delete /> : <Navigate replace to="/login" />} />
+            <Route path="/results/:inputString" element={<Results />} />
+            <Route path="/history/*" element={isLoggedIn ? <History /> : <Navigate replace to="/login" />} />
+            <Route path="/tags/:tagname" element={<TagDetails />} />
             <Route path="/" element={<Navigate replace to={isLoggedIn ? "/home" : "/login"} />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </Box>
       </Container>
