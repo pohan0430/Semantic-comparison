@@ -23,6 +23,8 @@ class SemanticTag(Resource):
                 "keywords": row.keywords,
                 "url": row.url,
                 "date": row.date,
+                "img": row.img,
+                "audience": row.audience,
             }
             for row in result
         ]
