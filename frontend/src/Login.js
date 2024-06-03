@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, TextField, Button} from '@mui/material';
+import { Box, TextField, Button } from '@mui/material';
 
 function Login({ onLoginSuccess }) {
   const [username, setUsername] = useState('');
@@ -7,7 +7,7 @@ function Login({ onLoginSuccess }) {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    onLoginSuccess(username, password);
+    onLoginSuccess({ username, password });
   };
 
   return (
@@ -16,10 +16,10 @@ function Login({ onLoginSuccess }) {
         margin="normal"
         required
         fullWidth
-        id="name"
+        id="username"
         label="User name"
-        name="name"
-        autoComplete="name"
+        name="username"
+        autoComplete="username"
         autoFocus
         value={username}
         onChange={(e) => setUsername(e.target.value)}
@@ -37,14 +37,14 @@ function Login({ onLoginSuccess }) {
         onChange={(e) => setPassword(e.target.value)}
       />
       <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', mt: 3, mb: 2 }}>
-          <Button
-            type="submit"
-            variant="contained"
-          >
-            Sign In
-          </Button>
+        <Button
+          type="submit"
+          variant="contained"
+        >
+          Sign In
+        </Button>
       </Box>
-  </Box>
+    </Box>
   );
 }
 
