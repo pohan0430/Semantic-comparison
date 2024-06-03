@@ -114,4 +114,4 @@ def find_similar_titles_urls(input_text: str, top_n_rank: int = 100) -> list:
 
 
 if __name__ == "__main__":
-    top_news_ids = find_similar_titles_urls("給養貓人士的建議", top_n_rank=50)
+    top_news_ids = find_similar_titles_urls("外送兼職foodpanda", top_n_rank=50)

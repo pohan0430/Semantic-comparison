@@ -2,6 +2,9 @@ import requests
 from zipfile import ZipFile
 import pandas as pd
 import numpy as np
+import torch
+import time
+from sentence_transformers import SentenceTransformer
 from io import BytesIO
 from argparse import ArgumentParser
 import json
@@ -9,8 +12,13 @@ import re
 import os
 import tqdm
 import jieba
-from backend.model.semantic_comparison import model
+from sqlalchemy import create_engine, text
+from sqlalchemy.exc import SQLAlchemyError
 from tqdm import tqdm
+from datetime import datetime, timedelta
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+model = SentenceTransformer("distiluse-base-multilingual-cased-v2").to(device)
 
 
 def parse_args():
@@ -19,15 +27,23 @@ def parse_args():
         "--table_name", type=str, help="table name in dora", default="exp_semantic_tag"
     )
     parser.add_argument(
-        "--export_date", type=str, help="export date in dora", default=None
+        "--export_date",
+        type=str,
+        help="export date in dora",
+        default=None,
     )
     args = parser.parse_args()
+
+    if args.export_date is None:
+        args.export_date = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
+
     return args
 
 
 def download_csv(args) -> pd.DataFrame:
     table_name = args.table_name
     export_date = args.export_date
+    print(f"export date : {export_date}")
 
     url = f"https://dora.ettoday.net/export/eds/{table_name}.zip?version={export_date}_000000&format=tsv"
 
@@ -90,14 +106,45 @@ def embedding(df: pd.DataFrame, batch_size: int = 100) -> pd.DataFrame:
     return df
 
 
+def import_to_db():
+    DATABASE_URL = "postgresql://postgres:postgres@postgres-database:5432/vectordb"
+    engine = create_engine(DATABASE_URL)
+
+    try:
+        with engine.connect() as connection:
+            connection.execute(
+                text("TRUNCATE TABLE news_embedding RESTART IDENTITY CASCADE")
+            )
+            connection.execute(
+                text(
+                    "COPY news_embedding FROM '/csv/news_embedding.csv' DELIMITER ',' CSV HEADER;"
+                )
+            )
+            print("Update successfully.")
+            result = connection.execute(text("SELECT COUNT(*) FROM news_embedding"))
+            count = result.scalar()
+            print(f"Total records in news_embedding: {count}")
+    except SQLAlchemyError as e:
+        print(f"Error: {e}")
+    finally:
+        engine.dispose()
+
+
 if __name__ == "__main__":
     args = parse_args()
 
-    df = download_csv(args)
+    # df = download_csv(args)
 
-    df = embedding(df)
-    print(f"DataFrame 總行數: {df.shape[0]}")
+    # df = embedding(df)
 
-    os.makedirs("data", exist_ok=True)
+    # os.makedirs("/data", exist_ok=True)
 
-    df.to_csv("./data/news_embedding.csv", index=False)
+    # df.to_csv("/data/news_embedding.csv", index=False)
+
+    with open("/data/complete.txt", "w") as f:
+        f.write("completed")
+
+    time.sleep(300)  # Check docker healthy
+    os.remove("/data/complete.txt")
+
+    # import_to_db()

@@ -1,6 +1,21 @@
 version: '3.8'
 
 services:
+  preprocess:
+    container_name: preprocess
+    build:
+      context: ./preprocess
+      dockerfile: Dockerfile
+    volumes:
+      - ./preprocess:/home/app
+      - ./data:/data
+    command: python /home/app/preprocess.py
+    healthcheck:
+      test: ["CMD", "test", "-f", "/data/complete.txt"]
+      interval: 1m
+      timeout: 10s
+      retries: 999999999
+
   postgres-database:
     hostname: postgres-database
     container_name: semantic_tag_db
@@ -21,6 +36,9 @@ services:
       interval: 25s
       timeout: 10s
       retries: 5
+    depends_on:
+      preprocess:
+        condition: service_healthy
 
   api:
     hostname: api

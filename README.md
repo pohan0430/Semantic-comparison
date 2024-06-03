@@ -15,3 +15,9 @@
   cd frontend
   npm start
   ```
+- Activate App from local
+  ```bash
+  http://localhost:6868
+  account:admin
+  password:password
+  ```
