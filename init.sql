@@ -16,7 +16,9 @@ CREATE TABLE News_Embedding (
     keywords TEXT,
     url TEXT,
     date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    embedding VECTOR(512)  -- Assuming EMBEDDING_LENGTH is predefined as an integer
+    img TEXT,
+    audience INTEGER,
+    embedding VECTOR(512)
 );
 
 COPY news_embedding FROM '/csv/news_embedding.csv' DELIMITER ',' CSV HEADER;
