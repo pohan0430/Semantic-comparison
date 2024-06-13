@@ -96,7 +96,6 @@ if __name__ == "__main__":
     df = download_csv(args)
 
     df = embedding(df)
-    print(f"DataFrame 總行數: {df.shape[0]}")
 
     os.makedirs("data", exist_ok=True)
 
