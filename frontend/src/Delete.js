@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import {
-  Container, Box, Typography, TextField, Button, Modal, IconButton
+  Container, Box, Typography, TextField, Button, Modal, IconButton, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
 function Delete() {
   const [tagName, setTagName] = useState('');
   const [open, setOpen] = useState(false);
+  const [openConfirm, setOpenConfirm] = useState(false);
   const [status, setStatus] = useState('');
 
   const handleClose = () => {
@@ -14,13 +15,11 @@ function Delete() {
     setStatus('');
   };
 
-  const handleDelete = (event) => {
-    event.preventDefault();
-    if (tagName.trim().length === 0) {
-      alert("Please enter a tag name.");
-      return;
-    }
+  const handleConfirmClose = () => {
+    setOpenConfirm(false);
+  };
 
+  const handleDelete = (event) => {
     fetch(`http://localhost:8008/tag/${encodeURIComponent(tagName)}`, {
       method: 'DELETE',
     })
@@ -32,13 +31,20 @@ function Delete() {
           throw new Error('Failed to delete the tag');
         }
       })
-      .then(data => {
-        setTagName('');
-      })
       .catch(error => {
         console.error(`Error fetching news for tag ${tagName}:`, error);
       });
     setOpen(true);
+    setOpenConfirm(false);
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    if (tagName.trim().length === 0) {
+      alert("Please enter a tag name.");
+      return;
+    }
+    setOpenConfirm(true);
   };
 
   const style = {
@@ -57,9 +63,9 @@ function Delete() {
     <Container component="main" maxWidth="xs">
       <Box sx={{ marginTop: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <Typography variant="h5" sx={{ mb: 4 }}>
-          Delete Tag
+          刪除標籤
         </Typography>
-        <form onSubmit={handleDelete} style={{ width: '100%' }}>
+        <form onSubmit={handleSubmit} style={{ width: '100%' }}>
           <TextField
             label="Enter Tag Name*"
             variant="outlined"
@@ -70,7 +76,7 @@ function Delete() {
           />
           <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3, mb: 2 }}>
             <Button type="submit" variant="contained" color="primary">
-              Delete Tag
+              刪除標籤
             </Button>
           </Box>
         </form>
@@ -84,6 +90,27 @@ function Delete() {
             </Typography>
           </Box>
         </Modal>
+        <Dialog
+          open={openConfirm}
+          onClose={handleConfirmClose}
+          aria-labelledby="confirm-dialog-title"
+          aria-describedby="confirm-dialog-description"
+        >
+          <DialogTitle id="confirm-dialog-title">Confirm Deletion</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="confirm-dialog-description">
+              確定刪除 "{tagName}"?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleConfirmClose} color="primary">
+              取消
+            </Button>
+            <Button onClick={handleDelete} color="primary" autoFocus>
+              確定
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Box>
     </Container>
   );

@@ -20,7 +20,7 @@ function History() {
     <Container component="main" maxWidth="xs" sx={{ maxWidth: '1200px', width: '100%', display: 'flex', flexDirection: 'column', mt: 4 }}>
     <Paper elevation={4} sx={{ p: 2, backgroundColor: '#f7f7f7', borderRadius: '10px' }}>
       <Typography variant="h4" sx={{ color: '#3f51b5', mb: 3 }}>
-        Tag History
+        標籤歷史
       </Typography>
       <List>
         {tags.map((tagId) => (
@@ -71,14 +71,14 @@ function TagDetails() {
   };
 
   return (
-    <Container component="main" sx={{ maxWidth: '1000px', width: '100%', display: 'flex', 
+    <Container component="main" sx={{ maxWidth: '1000px', width: '70%', display: 'flex', 
   flexDirection: 'column',  alignItems: 'auto' }}>
-      <Typography variant="h4" sx={{ mt: 2, mb: 2, fontWeight: 'bold' }}>
-        News for Tag: {tagname}
+      <Typography variant="h4" sx={{ mt: 2, mb: 2, fontWeight: 'bold', alignItems: 'auto' }}>
+        標籤名稱: {tagname}
       </Typography>
       <Button onClick={handleBack}  variant="contained" color="primary" sx={{width: '10%', mt: 2, mb: 2 }}>Back</Button>
       {news.map((item, index) => (
-        <Card key={index} sx={{ width: '100%', maxWidth: 1280, mb: 2, boxShadow: 3 }}>
+        <Card key={index} sx={{ width: '100%', maxWidth: 1000, mb: 2, boxShadow: 3 }}>
           <CardContent>
             <Typography variant="h6" sx={{ fontWeight: 'medium' }}>
               {item.title}

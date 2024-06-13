@@ -3,7 +3,7 @@ import { Routes, Route, Link, Navigate, useNavigate  } from 'react-router-dom';
 import { AppBar, Toolbar, Button, Typography, Box, Container, Menu, MenuItem  } from '@mui/material';
 import Login from './Login';
 import Search from './Search';
-import Results from './Results';
+// import Results from './Results';
 import Delete from './Delete';
 import { History, TagDetails } from './History';
 import Home from './Home';
@@ -27,8 +27,12 @@ function App() {
     handleClose();
   };
 
-  const handleLoginSuccess = () => {
-    setIsLoggedIn(true);
+  const handleLoginSuccess = ({ username, password }) => {
+    if (username === 'admin' && password === 'password') {
+      setIsLoggedIn(true);
+    } else {
+      alert('Invalid username or password');
+    }
   };
 
   const NotFound = () => {
@@ -54,13 +58,13 @@ function App() {
       <AppBar position="static">
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Semantic App
+            語意標籤搜尋
           </Typography>
           {isLoggedIn && (
             <>
-              <Button color="inherit" component={Link} to="/home">Home</Button>
+              <Button color="inherit" component={Link} to="/home">首頁</Button>
               <Button color="inherit" aria-controls="menu-appbar" aria-haspopup="true" onClick={handleMenu}>
-                Options
+                選項
               </Button>
               <Menu
                 id="menu-appbar"
@@ -83,11 +87,11 @@ function App() {
                   }
                 }}
               >
-                <MenuItem onClick={() => handleNavigate('/search')} sx={{ '&:hover': { backgroundColor: "primary.light", color: "black" } }}>Search</MenuItem>
-                <MenuItem onClick={() => handleNavigate('/delete')} sx={{ '&:hover': { backgroundColor: "primary.light", color: "black" } }}>Delete</MenuItem>
-                <MenuItem onClick={() => handleNavigate('/history')} sx={{ '&:hover': { backgroundColor: "primary.light", color: "black" } }}>History</MenuItem>
+                <MenuItem onClick={() => handleNavigate('/search')} sx={{ '&:hover': { backgroundColor: "primary.light", color: "black" } }}>搜尋</MenuItem>
+                <MenuItem onClick={() => handleNavigate('/delete')} sx={{ '&:hover': { backgroundColor: "primary.light", color: "black" } }}>刪除</MenuItem>
+                <MenuItem onClick={() => handleNavigate('/history')} sx={{ '&:hover': { backgroundColor: "primary.light", color: "black" } }}>歷史紀錄</MenuItem>
               </Menu>
-              <Button color="inherit" onClick={() => setIsLoggedIn(false)}>Logout</Button>
+              <Button color="inherit" onClick={() => setIsLoggedIn(false)}>登出</Button>
             </>
           )}
         </Toolbar>
@@ -99,7 +103,7 @@ function App() {
             <Route path="/home" element={isLoggedIn ? <Home /> : <Navigate replace to="/login" />} />
             <Route path="/search/*" element={isLoggedIn ? <Search /> : <Navigate replace to="/login" />} />
             <Route path="/delete/*" element={isLoggedIn ? <Delete /> : <Navigate replace to="/login" />} />
-            <Route path="/results/:inputString" element={<Results />} />
+            {/* <Route path="/results/:inputString" element={<Results />} /> */}
             <Route path="/history/*" element={isLoggedIn ? <History /> : <Navigate replace to="/login" />} />
             <Route path="/tags/:tagname" element={<TagDetails />} />
             <Route path="/" element={<Navigate replace to={isLoggedIn ? "/home" : "/login"} />} />

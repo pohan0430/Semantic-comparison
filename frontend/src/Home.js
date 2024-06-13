@@ -1,16 +1,25 @@
 import React from 'react';
-import { Box, Typography } from '@mui/material';
+import { Typography, Container, Box } from '@mui/material';
 
 function Home() {
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 8 }}>
-      <Typography variant="h4" sx={{ whiteSpace: 'nowrap' }}>
-        Welcome to the Semantic App
+    <Container maxWidth="md" sx={{ mt: 8, overflow: 'hidden' }}>
+      <Box sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: 200,
+        mb: 4
+      }}>
+        <img src={`${process.env.PUBLIC_URL + '/home.png'}`} alt="Home" style={{ width: '100%', height: 'auto', maxHeight: '100%' }} />
+      </Box>
+      <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 2, textAlign: 'center' }}>
+        歡迎使用標籤搜尋
       </Typography>
-      <Typography variant="body1" sx={{ mt: 2 }}>
-        Search the news you are interested in.
+      <Typography variant="body1" sx={{ textAlign: 'center' }}>
+        搜尋您有興趣的語意.
       </Typography>
-    </Box>
+    </Container>
   );
 }
 

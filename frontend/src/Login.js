@@ -41,7 +41,7 @@ function Login({ onLoginSuccess }) {
           type="submit"
           variant="contained"
         >
-          Sign In
+          登入
         </Button>
       </Box>
     </Box>
