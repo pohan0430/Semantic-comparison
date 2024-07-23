@@ -86,7 +86,7 @@ def total_audience():
         print("Generated SQL:", sql)
 
         play_session = (
-            "a1fe64a720ceac9acb9729070b58c6f21ac78e5a-namespace=eds&username=app.dmp"
+            
         )
 
         try:
