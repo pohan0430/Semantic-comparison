@@ -45,7 +45,7 @@ def download_csv(args) -> pd.DataFrame:
     export_date = args.export_date
     print(f"export date : {export_date}")
 
-    url = f"https://dora.ettoday.net/export/eds/{table_name}.zip?version={export_date}_000000&format=tsv"
+    url = 
 
     response = requests.get(url, stream=True)
 
